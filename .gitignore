@@ -1,4 +1,4 @@
 dist
 node_modules
 package-lock.json
-sentinel-cx-vite*
+sentineljs-cx-vite*

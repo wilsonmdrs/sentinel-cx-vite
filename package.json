@@ -1,5 +1,5 @@
 {
-  "name": "@sentinel/cx-vite",
+  "name": "@sentineljs/cx-vite",
   "version": "0.1.0",
   "type": "module",
   "main": "./dist/index.js",
@@ -18,12 +18,15 @@
     "dist",
     "README.md"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "pack": "npm run build && npm pack"
   },
   "dependencies": {
-    "@coralogix/browser": "^1.0.0"
+    "@coralogix/browser": "^3.1.0"
   },
   "peerDependencies": {
     "react": ">=17",
