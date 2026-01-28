@@ -1,5 +1,5 @@
 import type { Plugin } from "vite";
-import { uploadSourceMaps } from "./upload";
+import { uploadSourceMaps } from "./upload.js";
 
 export type CoralogixSourcemapsPluginOptions = {
   enabled?: boolean;
@@ -12,7 +12,9 @@ export type CoralogixSourcemapsPluginOptions = {
   folder?: string; // default dist/assets
 };
 
-export function coralogixSourcemapsPlugin(opts: CoralogixSourcemapsPluginOptions): Plugin {
+export function coralogixSourcemapsPlugin(
+  opts: CoralogixSourcemapsPluginOptions,
+): Plugin {
   return {
     name: "@sentinel/cx-vite-sourcemaps",
     apply: "build",
@@ -27,11 +29,11 @@ export function coralogixSourcemapsPlugin(opts: CoralogixSourcemapsPluginOptions
 
       if (!privateKey || !app || !env || !version) {
         throw new Error(
-          "@sentinel/cx-vite: coralogixSourcemapsPlugin requires privateKey, app, env, version when enabled=true"
+          "@sentinel/cx-vite: coralogixSourcemapsPlugin requires privateKey, app, env, version when enabled=true",
         );
       }
 
       await uploadSourceMaps({ privateKey, app, env, version, folder });
-    }
+    },
   };
 }
