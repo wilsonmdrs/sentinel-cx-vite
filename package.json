@@ -1,6 +1,6 @@
 {
   "name": "@sentineljs/cx-vite",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -14,6 +14,36 @@
       "default": "./dist/vite/index.js"
     }
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wilsonmdrs/sentinel-cx-vite.git"
+  },
+  "keywords": [
+    "react",
+    "sentinel",
+    "observability",
+    "error-tracking",
+    "error-monitoring",
+    "frontend-observability",
+    "github",
+    "coralogix",
+    "rum",
+    "real-user-monitoring",
+    "stack-traces",
+    "vite",
+    "vite-plugin",
+    "react-19",
+    "react-error-boundary",
+    "monitoring",
+    "logging",
+    "sourcemaps"
+  ],
+  "author": "Wilson Medeiros",
+  "bugs": {
+    "url": "https://github.com/wilsonmdrs/sentinel-cx-vite/issues"
+  },
+  "homepage": "https://github.com/wilsonmdrs/sentinel-cx-vite#readme",
+  "license": "MIT",
   "files": [
     "dist",
     "README.md"

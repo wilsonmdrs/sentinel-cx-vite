@@ -1,8 +1,9 @@
-# @sentinel/cx-vite
+# @sentineljs/cx-vite
 
 Sentinel integration package for **Vite + React + Coralogix**.
 
 This package provides:
+
 - Runtime error capture via Coralogix RUM
 - React helpers (`ErrorBoundary`, `withErrorBoundary`, `useSentinel`)
 - A Vite plugin to upload sourcemaps at build time (Sentry-like stack traces)
@@ -10,14 +11,14 @@ This package provides:
 ## Install
 
 ```bash
-npm i @sentinel/cx-vite
+npm i @sentineljs/cx-vite
 ```
 
 ## Runtime setup (Vite + React)
 
 ```ts
 // src/main.tsx
-import { initSentinel, ErrorBoundary } from "@sentinel/cx-vite";
+import { initSentinel, ErrorBoundary } from "@sentineljs/cx-vite";
 
 initSentinel({
   publicKey: import.meta.env.VITE_CX_RUM_PUBLIC_KEY,
@@ -37,7 +38,7 @@ initSentinel({
 Handled errors:
 
 ```ts
-import { captureException } from "@sentinel/cx-vite";
+import { captureException } from "@sentineljs/cx-vite";
 
 try {
   await submit();
@@ -52,13 +53,15 @@ Enable hidden sourcemaps:
 
 ```ts
 // vite.config.ts
-build: { sourcemap: "hidden" }
+build: {
+  sourcemap: "hidden";
+}
 ```
 
 Add the plugin:
 
 ```ts
-import { coralogixSourcemapsPlugin } from "@sentinel/cx-vite/vite";
+import { coralogixSourcemapsPlugin } from "@sentineljs/cx-vite/vite";
 
 export default defineConfig({
   plugins: [
@@ -69,9 +72,9 @@ export default defineConfig({
       app: process.env.CX_APP,
       env: process.env.CX_ENV,
       version: process.env.VITE_APP_VERSION,
-      folder: "dist/assets"
-    })
-  ]
+      folder: "dist/assets",
+    }),
+  ],
 });
 ```
 
