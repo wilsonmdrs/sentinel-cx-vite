@@ -1,73 +1,119 @@
 # @sentineljs/cx-vite
 
-Sentinel integration package for **Vite + React + Coralogix**.
+Sentinel is a lightweight observability integration for **Vite + React** applications using **Coralogix RUM**.
 
-This package provides:
+It provides:
 
-- Runtime error capture via Coralogix RUM
-- React helpers (`ErrorBoundary`, `withErrorBoundary`, `useSentinel`)
-- A Vite plugin to upload sourcemaps at build time (Sentry-like stack traces)
+- Runtime error capture (browser)
+- React Error Boundary helpers
+- First-class support for **React 19 error hooks**
+- A Vite plugin to upload **hidden sourcemaps** for Sentry-like stack traces
+- Zero CI dependency (works locally or in CI)
 
-## Install
+---
+
+## Installation
 
 ```bash
-npm i @sentineljs/cx-vite
+npm install @sentineljs/cx-vite
 ```
 
-## Runtime setup (Vite + React)
+---
 
-```ts
-// src/main.tsx
-import { initSentinel, ErrorBoundary } from "@sentineljs/cx-vite";
+## Environment variables
+
+### Frontend (public)
+
+```bash
+VITE_CX_RUM_PUBLIC_KEY=xxxx
+VITE_CX_DOMAIN=EU2
+VITE_APP_NAME=my-web-app
+VITE_ENV_NAME=prod
+VITE_APP_VERSION=1.2.3
+```
+
+### Build-time only (private)
+
+```bash
+CX_PRIVATE_KEY=yyyy
+CX_APP=my-web-app
+CX_ENV=prod
+```
+
+---
+
+## Runtime setup (React + Vite)
+
+```tsx
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import {
+  initSentinel,
+  captureException,
+  ErrorBoundary,
+} from "@sentineljs/cx-vite";
 
 initSentinel({
   publicKey: import.meta.env.VITE_CX_RUM_PUBLIC_KEY,
-  domain: import.meta.env.VITE_CX_DOMAIN, // "EU1" | "EU2" | ...
+  domain: import.meta.env.VITE_CX_DOMAIN,
   app: import.meta.env.VITE_APP_NAME,
-  env: import.meta.env.VITE_ENV_NAME,        // dev|qa|prod
-  version: import.meta.env.VITE_APP_VERSION, // MUST match sourcemap upload version
-  tags: { service: "web" }
+  env: import.meta.env.VITE_ENV_NAME,
+  version: import.meta.env.VITE_APP_VERSION,
 });
 
-// ...
-<ErrorBoundary>
-  <App />
-</ErrorBoundary>
+const root = ReactDOM.createRoot(document.getElementById("root")!, {
+  onUncaughtError(error, info) {
+    captureException(error, {
+      extra: {
+        type: "react.onUncaughtError",
+        componentStack: info.componentStack,
+      },
+    });
+  },
+  onRecoverableError(error, info) {
+    captureException(error, {
+      extra: {
+        type: "react.onRecoverableError",
+        componentStack: info.componentStack,
+      },
+    });
+  },
+});
+
+root.render(
+  <ErrorBoundary>
+    <App />
+  </ErrorBoundary>,
+);
 ```
 
-Handled errors:
+---
+
+## Capturing handled errors
 
 ```ts
 import { captureException } from "@sentineljs/cx-vite";
 
 try {
-  await submit();
+  await submitOrder();
 } catch (e) {
   captureException(e, { extra: { feature: "checkout" } });
 }
 ```
 
-## Vite sourcemaps plugin
+---
 
-Enable hidden sourcemaps:
-
-```ts
-// vite.config.ts
-build: {
-  sourcemap: "hidden";
-}
-```
-
-Add the plugin:
+## Vite sourcemaps integration
 
 ```ts
 import { coralogixSourcemapsPlugin } from "@sentineljs/cx-vite/vite";
 
-export default defineConfig({
+export default {
+  build: { sourcemap: "hidden" },
   plugins: [
     coralogixSourcemapsPlugin({
-      remember: true,
-      enabled: process.env.CX_SOURCEMAPS === "true",
+      enabled: true,
       privateKey: process.env.CX_PRIVATE_KEY,
       app: process.env.CX_APP,
       env: process.env.CX_ENV,
@@ -75,19 +121,11 @@ export default defineConfig({
       folder: "dist/assets",
     }),
   ],
-});
+};
 ```
 
-Run a build with upload enabled:
+---
 
-```bash
-export CX_SOURCEMAPS=true
-export CX_PRIVATE_KEY="..."
-export CX_APP="my-web"
-export CX_ENV="prod"
-export VITE_APP_VERSION="1.2.3+local"
+## License
 
-npm run build
-```
-
-> Important: `version` passed to `initSentinel()` must match the uploaded sourcemap version.
+MIT
